@@ -26,13 +26,15 @@ lb.querySelector('.lbp').onclick=e=>{e.stopPropagation();show(ix-1)};lb.querySel
 addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;if(e.key=='Escape')lb.classList.remove('on');if(e.key=='ArrowLeft')show(ix-1);if(e.key=='ArrowRight')show(ix+1)});
 let tx=0;lb.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});lb.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)show(ix+(d<0?1:-1))});
 const mq=$('.mq div');if(mq)mq.textContent=mq.textContent.repeat(14);
-const cv=$('#sp');if(cv){const h=cv.parentElement,c=cv.getContext('2d'),S=.5,P=[],K=['#ff2fa3','#8b3dff','#19d3ff','#d7ff3a','#ff8a1f'];let k=0,lx=0,ly=0,hy=0,run=0;
+const cv=$('#sp');if(cv){const h=cv.parentElement,c=cv.getContext('2d'),S=.5,P=[],K=['#ff2fa3','#8b3dff','#19d3ff','#d7ff3a','#ff8a1f'];let k=0,lx=0,ly=0,hy=0,run=0,ui=0;
 const rs=()=>{cv.width=h.clientWidth*S;cv.height=h.clientHeight*S;hy=h.getBoundingClientRect().top+scrollY};rs();addEventListener('resize',rs);
 new IntersectionObserver(e=>h.classList.toggle('off',!e[0].isIntersecting)).observe(h);
-const hint=$('#hint'),sp=(x,y,n,m)=>{hint&&hint.classList.add('x');for(let i=0;i<n&&P.length<600;i++){const a=Math.random()*6.28,r=Math.random()*Math.random()*m;P.push({x:(x+Math.cos(a)*r)*S,y:(y+Math.sin(a)*r)*S,s:(Math.random()*2.4+1)*S*1.6,l:1,c:K[k|0],v:Math.random()<.05?(Math.random()*1.4+.4)*S:0})}if(!run){run=1;requestAnimationFrame(f)}};
+const hints=document.querySelectorAll('.hint'),sp=(x,y,n,m,a)=>{if(!a){ui=1;hints.forEach(e=>e.classList.add('x'))}for(let i=0;i<n&&P.length<600;i++){const a=Math.random()*6.28,r=Math.random()*Math.random()*m;P.push({x:(x+Math.cos(a)*r)*S,y:(y+Math.sin(a)*r)*S,s:(Math.random()*2.4+1)*S*1.6,l:1,c:K[k|0],v:Math.random()<.05?(Math.random()*1.4+.4)*S:0})}if(!run){run=1;requestAnimationFrame(f)}};
 function f(){c.clearRect(0,0,cv.width,cv.height);for(let i=P.length-1;i>=0;i--){const p=P[i];p.l-=.012;p.y+=p.v;if(p.l<=0){P[i]=P[P.length-1];P.pop();continue}c.globalAlpha=p.l;c.fillStyle=p.c;c.fillRect(p.x,p.y,p.s,p.s)}if(P.length)requestAnimationFrame(f);else run=0}
 h.addEventListener('pointermove',e=>{const x=e.pageX,y=e.pageY-hy;if(Math.hypot(x-lx,y-ly)>10){sp(x,y,9,24);lx=x;ly=y;k=(k+.06)%K.length}},{passive:true});
-h.addEventListener('pointerdown',e=>{k=(k+1)%K.length;sp(e.pageX,e.pageY-hy,110,60)})}
+h.addEventListener('pointerdown',e=>{k=(k+1)%K.length;sp(e.pageX,e.pageY-hy,110,60)});
+/* touch: kratka automatska demonstracija spreja preko logoa */
+if(matchMedia('(hover:none)').matches&&!matchMedia('(prefers-reduced-motion:reduce)').matches)setTimeout(()=>{if(ui||scrollY>150)return;const r=$('.lw').getBoundingClientRect(),hr=h.getBoundingClientRect();let t=0;const id=setInterval(()=>{t+=.035;if(t>1||ui){clearInterval(id);return}sp(r.left-hr.left+r.width*(.15+.7*t),r.top-hr.top+r.height*(.62+.1*Math.sin(t*10)),7,18,1);k=(k+.05)%K.length},30)},1800)}
 
 (function(){const sw=document.querySelectorAll('#sw button'),sz=document.querySelectorAll('#sz button'),bs=document.querySelectorAll('.pkg .pr b'),ems=document.querySelectorAll('.pkg .pr em'),szw=$('#sz');
 if(!sw.length)return;let mode='dog',si=0;const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
